@@ -13,7 +13,7 @@ O FlowWidget nasceu da necessidade de um organizador de rotina que não te prend
 * **Banco de Dados 100% Local (Room/SQLite):** Seus blocos de estudo, trabalho e vida pessoal nascem e morrem dentro do armazenamento interno do seu celular.
 * **Calendário Compacto de Foco Temporal (3x7):** Um grid de 3 semanas (7 colunas) fixado na tela de configurações com efeito de degradê (Fade Out) para dias distantes, mantendo sua atenção no presente imediato (Janela de 7 dias).
 * **Lógica do "Momento Livre":** Quando você entra em um bloco de tempo livre, o widget oferece um botão para ocultar a interface, limpando a tela sem interromper o serviço de contagem em background. O widget reaparece sozinho assim que o próximo bloco ativo começa.
-* **Gestão Inteligente de Conflitos:** Separação entre rotinas fixas (recorrentes da semana com seleção de múltiplos dias) e pontuais (datas específicas), com sistema de priorização via alertas.
+* **Gestão Inteligente de Conflitos:** Separação entre rotinas fixas (recorrentes da semana com seleção de múltiplos dias) e pontuais (dates específicas), com sistema de priorização via alertas.
 * **Blindagem Standby (Anti-Kill):** Implementação de `START_STICKY`, Watchdog (`BroadcastReceiver`) e remoção de otimização de bateria para garantir que o sistema operacional não encerre o cronômetro durante a noite.
 
 ---
@@ -21,7 +21,7 @@ O FlowWidget nasceu da necessidade de um organizador de rotina que não te prend
 ## 🏗️ Arquitetura e Tecnologias
 * **Linguagem:** Kotlin
 * **Engine de Banco de Dados:** Jetpack Room (SQLite local)
-* **Concorrência:** Kotlin Coroutines (operações assíncronas assíncronas e timers leves)
+* **Concorrência:** Kotlin Coroutines (operações assíncronas e timers leves)
 * **Interface UI:** Material Design 3 (Dark Mode nativo, cantos arredondados de 24dp/28dp)
 * **Background Processing:** Foreground Service com notificação persistente
 
@@ -33,4 +33,22 @@ Sendo um projeto de código aberto, você pode clonar e compilar o FlowWidget di
 
 1. Clone este repositório:
    ```bash
-   git clone [https://github.com/SEU_USUARIO/FlowWidget.git](https://github.com/SEU_USUARIO/FlowWidget.git)
+   git clone https://github.com/SEU_USUARIO/FlowWidget.git
+   ```
+
+2. Abra o projeto no **Android Studio** (versão Ladybug ou superior recomendada).
+3. Certifique-se de que o arquivo `gradle.properties` contenha a linha para suporte ao Room/KSP:
+   ```properties
+   android.disallowKotlinSourceSets=false
+   ```
+
+4. Conecte seu dispositivo Android via USB (com a Depuração USB ativa).
+5. Certifique-se de conceder as seguintes permissões ao rodar o app:
+   * **Sobreposição a outros aplicativos** (essencial para a janela flutuante).
+   * **Ignorar otimizações de bateria** (para evitar o encerramento em standby).
+
+---
+
+## 📄 Licença
+
+Este projeto é distribuído sob a licença **MIT** — veja o arquivo [LICENSE](LICENSE) para mais detalhes. Sinta-se livre para clonar, modificar e usar no seu próprio ecossistema pessoal.
