@@ -33,7 +33,7 @@ Sendo um projeto de código aberto, você pode clonar e compilar o FlowWidget di
 
 1. Clone este repositório:
    ```bash
-   git clone https://github.com/SEU_USUARIO/FlowWidget.git
+   git clone https://github.com/michael-devbsb/FlowWidget.git
    ```
 
 2. Abra o projeto no **Android Studio** (versão Ladybug ou superior recomendada).
