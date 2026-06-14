@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.FlowWidget" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">#FFFFFF</item>
+        <item name="android:windowBackground">#121212</item>
+        <item name="android:statusBarColor">#121212</item>
+    </style>
+</resources>
