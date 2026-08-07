@@ -77,9 +77,11 @@ class SettingsActivity : AppCompatActivity() {
         
         val days = mutableListOf<CalendarDay>()
         val cal = Calendar.getInstance()
-        
-        // Iniciar o calendário há 10 dias atrás para que o "Hoje" fique centralizado visualmente (coluna 4, linha 2 -> índice 10)
-        cal.add(Calendar.DAY_OF_YEAR, -10)
+
+       // Força o calendário a ir para o domingo da semana atual
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+       // Retrocede uma semana inteira para que a semana atual seja a do meio (linha 2)
+        cal.add(Calendar.DAY_OF_YEAR, -7)
         
         for (i in 0 until 21) {
             val day = Calendar.getInstance().apply { time = cal.time }
@@ -96,7 +98,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setupRoutineList() {
         val rvRoutines = findViewById<RecyclerView>(R.id.rv_routines)
-        rvRoutines.layoutManager = LinearLayoutManager(this)
+        //rvRoutines.layoutManager = LinearLayoutManager(this)
         adapter = RoutineAdapter(
             onEdit = { showRoutineBottomSheet(it) },
             onDelete = { showDeleteConfirmation(it) }
@@ -146,7 +148,7 @@ class CalendarAdapter(
     private val onDaySelected: (Calendar) -> Unit
 ) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
 
-    private var selectedPos = 10 // Hoje (iniciado com offset -10 para centralizar em 3x7)
+    private var selectedPos = 7 + (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1)
 
     init {
         days[selectedPos].isSelected = true
@@ -197,32 +199,30 @@ class CalendarAdapter(
             // Visual logic for Today and Selected
             when {
                 isToday && item.isSelected -> {
-                    // Hoje e Selecionado: Círculo preenchido + Borda branca
+                    // Hoje e Selecionado: Fundo colorido + Borda branca no foreground
                     tvDayNumber.setBackgroundResource(R.drawable.bg_calendar_today)
                     tvDayNumber.backgroundTintList = android.content.res.ColorStateList.valueOf(activeColor)
-                    container.setBackgroundResource(R.drawable.bg_calendar_selected)
-                    tvDayNumber.setTextColor(Color.WHITE)
+                    tvDayNumber.foreground = androidx.core.content.ContextCompat.getDrawable(tvDayNumber.context, R.drawable.bg_calendar_selected)
                 }
                 isToday -> {
-                    // Apenas Hoje: Círculo preenchido
+                    // Apenas Hoje: Fundo colorido, sem borda no foreground
                     tvDayNumber.setBackgroundResource(R.drawable.bg_calendar_today)
                     tvDayNumber.backgroundTintList = android.content.res.ColorStateList.valueOf(activeColor)
-                    container.setBackgroundColor(Color.TRANSPARENT)
-                    tvDayNumber.setTextColor(Color.WHITE)
+                    tvDayNumber.foreground = null
                 }
                 item.isSelected -> {
-                    // Apenas Selecionado: Borda branca
+                    // Apenas Selecionado: Fundo transparente, apenas borda no foreground
                     tvDayNumber.setBackgroundColor(Color.TRANSPARENT)
-                    container.setBackgroundResource(R.drawable.bg_calendar_selected)
-                    tvDayNumber.setTextColor(Color.WHITE)
+                    tvDayNumber.foreground = androidx.core.content.ContextCompat.getDrawable(tvDayNumber.context, R.drawable.bg_calendar_selected)
                 }
                 else -> {
-                    // Dia comum
+                    // Dia comum: Limpa fundo e borda
                     tvDayNumber.setBackgroundColor(Color.TRANSPARENT)
-                    container.setBackgroundColor(Color.TRANSPARENT)
-                    tvDayNumber.setTextColor(Color.WHITE)
+                    tvDayNumber.foreground = null
                 }
             }
+            // O container agora fica sempre transparente para não interferir
+            container.setBackgroundColor(Color.TRANSPARENT)
 
             container.setOnClickListener {
                 val oldPos = selectedPos
@@ -313,8 +313,7 @@ class RoutineBottomSheet(
         val rbFixed = view.findViewById<RadioButton>(R.id.rb_fixed)
         val rbPunctual = view.findViewById<RadioButton>(R.id.rb_punctual)
         val cgDays = view.findViewById<ChipGroup>(R.id.cg_days)
-        val sliderHue = view.findViewById<Slider>(R.id.slider_hue)
-        val viewSelectedColor = view.findViewById<View>(R.id.view_selected_color)
+        val rgColors = view.findViewById<RadioGroup>(R.id.rg_color_selector)
 
         val chips = listOf(
             view.findViewById<Chip>(R.id.chip_dom),
@@ -335,9 +334,9 @@ class RoutineBottomSheet(
             selectedColorHex = it.colorHex
             startTime = it.startTime
             endTime = it.endTime
-            
-            // Sync slider and preview with existing color
-            updateUIWithColor(selectedColorHex, sliderHue, viewSelectedColor)
+
+
+            updateUIWithColor(selectedColorHex, rgColors)
 
             if (it.isFixed) {
                 rbFixed.isChecked = true
@@ -358,18 +357,16 @@ class RoutineBottomSheet(
             }
         } ?: run {
             // New block: default color and selected day
-            updateUIWithColor(selectedColorHex, sliderHue, viewSelectedColor)
+            updateUIWithColor(selectedColorHex, rgColors)
             val currentDayIndex = selectedDate.get(Calendar.DAY_OF_WEEK) - 1
             if (currentDayIndex in chips.indices) chips[currentDayIndex].isChecked = true
         }
 
-        sliderHue.addOnChangeListener { _, value, fromUser ->
-            if (fromUser) {
-                val hsv = floatArrayOf(value, 0.7f, 0.9f)
-                val colorInt = Color.HSVToColor(hsv)
-                selectedColorHex = String.format("#%06X", (0xFFFFFF and colorInt))
-                viewSelectedColor.backgroundTintList = android.content.res.ColorStateList.valueOf(colorInt)
-            }
+        rgColors.setOnCheckedChangeListener { group, checkedId ->
+            val selectedRadioButton = group.findViewById<RadioButton>(checkedId)
+            // Pega a cor que você definiu no backgroundTint do XML
+            val colorInt = selectedRadioButton.backgroundTintList?.defaultColor ?: Color.WHITE
+            selectedColorHex = String.format("#%06X", (0xFFFFFF and colorInt))
         }
 
         btnStart.text = "Início: $startTime"
@@ -443,26 +440,22 @@ class RoutineBottomSheet(
         return view
     }
 
-    private fun updateUIWithColor(hex: String, slider: Slider, preview: View) {
+    private fun updateUIWithColor(hex: String, rgColors: RadioGroup) {
+        selectedColorHex = hex
         try {
-            val colorInt = Color.parseColor(hex)
-            preview.backgroundTintList = android.content.res.ColorStateList.valueOf(colorInt)
-            
-            val hsv = FloatArray(3)
-            Color.colorToHSV(colorInt, hsv)
-            
-            // Round to nearest valid value based on stepSize and valueFrom to avoid IllegalStateException
-            val value = hsv[0]
-            if (slider.stepSize > 0) {
-                val stepSize = slider.stepSize
-                val n = Math.round((value - slider.valueFrom) / stepSize)
-                val roundedValue = slider.valueFrom + n * stepSize
-                slider.value = roundedValue.coerceIn(slider.valueFrom, slider.valueTo)
-            } else {
-                slider.value = value.coerceIn(slider.valueFrom, slider.valueTo)
+            val targetColor = Color.parseColor(hex)
+
+            // Percorre todas as bolinhas para encontrar a que tem a cor salva
+            for (i in 0 until rgColors.childCount) {
+                val rb = rgColors.getChildAt(i) as? RadioButton
+                // Se a cor da bolinha no XML for igual à cor salva no banco, ela fica selecionada
+                if (rb?.backgroundTintList?.defaultColor == targetColor) {
+                    rb.isChecked = true
+                    break
+                }
             }
         } catch (e: Exception) {
-            // Default if parse fails
+            // Se a cor for inválida, apenas ignora
         }
     }
 

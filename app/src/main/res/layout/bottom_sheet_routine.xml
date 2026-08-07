@@ -200,36 +200,152 @@
         android:textSize="14sp"
         android:layout_marginBottom="8dp" />
 
-    <LinearLayout
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
+        android:layout_marginBottom="24dp"
+        android:scrollbars="none">
 
-        <View
-            android:id="@+id/view_selected_color"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/bg_task_container"
-            android:backgroundTint="#34495e" />
-
-        <com.google.android.material.slider.Slider
-            android:id="@+id/slider_hue"
-            android:layout_width="0dp"
+        <RadioGroup
+            android:id="@+id/rg_color_selector"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="16dp"
-            android:valueFrom="0.0"
-            android:valueTo="360.0"
-            android:stepSize="1.0"
-            app:trackHeight="12dp"
-            app:trackColorActive="@android:color/transparent"
-            app:trackColorInactive="@android:color/transparent"
-            android:background="@drawable/hue_gradient"
-            app:thumbColor="#FFFFFF"
-            app:thumbElevation="4dp" />
-    </LinearLayout>
+            android:orientation="horizontal">
+
+            <!-- 1. Vermelho -->
+            <RadioButton
+                android:id="@+id/color_red"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#FF0000"
+                android:foreground="@drawable/selection_border" />
+
+            <!-- 2. Laranja -->
+            <RadioButton
+                android:id="@+id/color_orange"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#FF7F00"
+                android:foreground="@drawable/selection_border" />
+
+            <!-- 3. Amarelo -->
+            <RadioButton
+                android:id="@+id/color_yellow"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#FFFF00"
+                android:foreground="@drawable/selection_border" />
+
+            <!-- 4. Lima -->
+            <RadioButton
+                android:id="@+id/color_lime"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#7FFF00"
+                android:foreground="@drawable/selection_border" />
+
+            <!-- 5. Verde -->
+            <RadioButton
+                android:id="@+id/color_green"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#00FF00"
+                android:foreground="@drawable/selection_border" />
+
+            <!-- 6. Verde-água -->
+            <RadioButton
+                android:id="@+id/color_spring_green"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#00FF7F"
+                android:foreground="@drawable/selection_border" />
+
+            <!-- 7. Ciano -->
+            <RadioButton
+                android:id="@+id/color_cyan"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#00FFFF"
+                android:foreground="@drawable/selection_border" />
+
+            <!-- 8. Azul Claro -->
+            <RadioButton
+                android:id="@+id/color_azure"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#007FFF"
+                android:foreground="@drawable/selection_border" />
+
+            <!-- 9. Azul -->
+            <RadioButton
+                android:id="@+id/color_blue"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#0000FF"
+                android:foreground="@drawable/selection_border" />
+
+            <!-- 10. Roxo -->
+            <RadioButton
+                android:id="@+id/color_violet"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#7F00FF"
+                android:foreground="@drawable/selection_border" />
+
+            <!-- 11. Magenta -->
+            <RadioButton
+                android:id="@+id/color_magenta"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#FF00FF"
+                android:foreground="@drawable/selection_border" />
+
+            <!-- 12. Rosa -->
+            <RadioButton
+                android:id="@+id/color_rose"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:button="@null"
+                android:background="@drawable/selector_color_dot"
+                android:backgroundTint="#FF007F"
+                android:foreground="@drawable/selection_border" />
+
+        </RadioGroup>
+    </HorizontalScrollView>
 
     <Button
         android:id="@+id/btn_save"
