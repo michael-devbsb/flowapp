@@ -10,22 +10,42 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="35dp"
-            android:text="My Flow"
-            android:textColor="#FFFFFF"
-            android:textSize="32sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="35dp">
+
+            <!-- Título Principal (Esquerda) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My Flow"
+                android:textColor="#FFFFFF"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+
+            <!-- Mês Atual (Direita) -->
+            <TextView
+                android:id="@+id/tv_current_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="AGOSTO"
+                android:textColor="#80FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textAllCaps="true" />
+
+        </RelativeLayout>
 
         <!-- Calendário 3x7 Fixo -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_calendar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
+            android:layout_height="210dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:overScrollMode="never" />

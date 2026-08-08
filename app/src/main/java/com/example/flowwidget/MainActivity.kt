@@ -33,7 +33,9 @@ class MainActivity : ComponentActivity() {
             if (isServiceRunning(FloatingWidgetService::class.java)) {
                 intent.putExtra("STOP_BY_USER", true)
                 startService(intent) // Envia sinal para o serviço se auto-parar
-                updateToggleButtonState()
+
+                btnToggle.setColorFilter(Color.WHITE)
+
                 Toast.makeText(this, "Widget desativado", Toast.LENGTH_SHORT).show()
             } else {
                 if (checkOverlayPermission()) {
@@ -74,7 +76,7 @@ class MainActivity : ComponentActivity() {
         } else {
             startService(intent)
         }
-        updateToggleButtonState()
+        btnToggle.setColorFilter(Color.parseColor("#FF5252"))
     }
 
     private fun updateToggleButtonState() {
