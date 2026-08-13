@@ -9,6 +9,9 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PixelFormat
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.os.IBinder
 import android.view.Gravity
@@ -90,6 +93,11 @@ class FloatingWidgetService : Service() {
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            layoutParams.flags = layoutParams.flags or WindowManager.LayoutParams.FLAG_BLUR_BEHIND
+            layoutParams.blurBehindRadius = 45
+        }
 
         layoutParams.gravity = Gravity.TOP or Gravity.START
         layoutParams.x = 100
@@ -205,24 +213,27 @@ class FloatingWidgetService : Service() {
         val list = floatingView?.findViewById<TextView>(R.id.txt_tarefas_lista)
         val timer = floatingView?.findViewById<TextView>(R.id.txt_timer)
 
-        if (block != null) {
+        val tintColor = if (block != null) {
             title?.text = "• ${block.name}"
             list?.text = block.tasks
+            timer?.text = calculateCountdown(block.endTime, now)
             
             try {
-                val color = Color.parseColor(block.colorHex)
-                root?.background?.setTint(color)
+                Color.parseColor(block.colorHex)
             } catch (e: Exception) {
-                root?.background?.setTint(Color.parseColor("#A6FFFFFF"))
+                Color.parseColor("#33FFFFFF")
             }
-
-            timer?.text = calculateCountdown(block.endTime, now)
         } else {
             title?.text = "Descanso"
             list?.text = "Nenhum bloco ativo"
             timer?.text = "00:00:00"
-            root?.background?.setTint(Color.parseColor("#A6444444"))
+            Color.parseColor("#33444444")
         }
+
+        // Aplicar tint apenas na camada base do Liquid Glass para manter os brilhos brancos
+        val background = root?.background as? LayerDrawable
+        val baseLayer = background?.findDrawableByLayerId(R.id.glass_base)
+        baseLayer?.setTint(tintColor)
     }
 
     private fun calculateCountdown(endTimeStr: String, now: Calendar): String {

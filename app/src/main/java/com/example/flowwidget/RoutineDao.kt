@@ -9,7 +9,7 @@ import androidx.room.Query
 @Dao
 interface RoutineDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertBlock(block: RoutineBlock)
+    suspend fun insertBlock(block: RoutineBlock): Long
 
     @Delete
     suspend fun deleteBlock(block: RoutineBlock)

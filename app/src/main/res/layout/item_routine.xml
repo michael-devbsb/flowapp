@@ -21,8 +21,8 @@
         <View
             android:id="@+id/view_color_indicator"
             android:layout_width="12dp"
-            android:layout_height="48dp"
-            android:background="@android:color/white"
+            android:layout_height="30dp"
+            android:background="@drawable/bg_routine_indicator"
             android:backgroundTint="#34495e" />
 
         <LinearLayout

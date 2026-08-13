@@ -3,6 +3,7 @@ package com.example.flowwidget
 import android.app.TimePickerDialog
 import android.app.DatePickerDialog
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -53,11 +54,26 @@ class SettingsActivity : AppCompatActivity() {
         setupCalendar()
         setupRoutineList()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+        }
+
         findViewById<FloatingActionButton>(R.id.fab_add).setOnClickListener {
             showRoutineBottomSheet(null)
         }
 
+        findViewById<FloatingActionButton>(R.id.fab_settings).setOnClickListener {
+            showSettingsBottomSheet()
+        }
+
         loadBlocks()
+    }
+
+    private fun showSettingsBottomSheet() {
+        val sheet = SettingsBottomSheet {
+            loadBlocks()
+        }
+        sheet.show(supportFragmentManager, "SettingsSheet")
     }
 
     private fun loadActiveBlockColor() {
@@ -188,6 +204,7 @@ class SettingsActivity : AppCompatActivity() {
             .setMessage("Deseja realmente remover '${block.name}'?")
             .setPositiveButton("Excluir") { _, _ ->
                 lifecycleScope.launch {
+                    NotificationScheduler.cancelAlarm(this@SettingsActivity, block)
                     db.routineDao().deleteBlock(block)
                     loadBlocks()
                 }
@@ -585,7 +602,9 @@ class RoutineBottomSheet(
 
     private fun save(block: RoutineBlock) {
         lifecycleScope.launch {
-            AppDatabase.getDatabase(requireContext()).routineDao().insertBlock(block)
+            val id = AppDatabase.getDatabase(requireContext()).routineDao().insertBlock(block)
+            val blockWithId = if (block.id == 0) block.copy(id = id.toInt()) else block
+            NotificationScheduler.scheduleAlarm(requireContext(), blockWithId)
             onSaved()
             dismiss()
         }

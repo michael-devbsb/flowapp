@@ -9,12 +9,15 @@ O FlowWidget nasceu da necessidade de um organizador de rotina que não te prend
 
 ## 🛠️ Funcionalidades Principais
 
-* **Widget Flutuante (Overlay Nativo):** Camada visual móvel que exibe o timer regressivo e as sub-tarefas ativas por cima de qualquer aplicativo.
+* **Widget Flutuante (Overlay Nativo):** Camada visual móvel com largura fixa (1/4 da tela) que exibe o timer regressivo e as sub-tarefas ativas por cima de qualquer aplicativo.
+* **Lembretes Antecipados (15 min):** Sistema de notificações inteligente que avisa o usuário 15 minutos antes do início de qualquer tarefa agendada.
 * **Banco de Dados 100% Local (Room/SQLite):** Seus blocos de estudo, trabalho e vida pessoal nascem e morrem dentro do armazenamento interno do seu celular.
-* **Calendário Compacto de Foco Temporal (3x7):** Um grid de 3 semanas (7 colunas) fixado na tela de configurações com efeito de degradê (Fade Out) para dias distantes, mantendo sua atenção no presente imediato (Janela de 7 dias).
-* **Lógica do "Momento Livre":** Quando você entra em um bloco de tempo livre, o widget oferece um botão para ocultar a interface, limpando a tela sem interromper o serviço de contagem em background. O widget reaparece sozinho assim que o próximo bloco ativo começa.
-* **Gestão Inteligente de Conflitos:** Separação entre rotinas fixas (recorrentes da semana com seleção de múltiplos dias) e pontuais (dates específicas), com sistema de priorização via alertas.
-* **Blindagem Standby (Anti-Kill):** Implementação de `START_STICKY`, Watchdog (`BroadcastReceiver`) e remoção de otimização de bateria para garantir que o sistema operacional não encerre o cronômetro durante a noite.
+* **Calendário Vertical Dinâmico:** Visualização infinita de semanas com scroll vertical, mantendo sempre 3 linhas visíveis. O cabeçalho do mês atualiza-se automaticamente conforme o scroll.
+* **Seletor de Cores Arco-Íris:** Personalização de blocos com uma paleta fixa de 12 cores vibrantes selecionáveis via interface intuitiva.
+* **Detalhes da Rotina:** Visualização completa de informações do bloco (horário, dias, tarefas) através de um modal centralizado, sem precisar entrar no modo de edição.
+* **Lógica do "Momento Livre":** Quando você entra em um bloco de tempo livre, o widget oferece um botão para ocultar a interface. O widget reaparece sozinho assim que o próximo bloco ativo começa.
+* **Gestão Inteligente de Conflitos:** Separação entre rotinas fixas (recorrentes da semana) e pontuais, com sistema de priorização via alertas.
+* **Blindagem Standby (Anti-Kill):** Implementação de `START_STICKY`, Watchdog (`BroadcastReceiver`) e `AlarmManager` para garantir que o sistema não encerre o cronômetro ou os lembretes.
 
 ---
 
