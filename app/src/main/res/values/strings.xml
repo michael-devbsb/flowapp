@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">FlowWidget</string>
+    <string name="app_name">Flow</string>
+    <string name="notification_action_stop">Encerrar</string>
+    <string name="notification_title_active">%1$s</string>
+    <string name="notification_title_rest">Descanso</string>
+    <string name="notification_content_rest">Nenhum bloco ativo no momento.</string>
 </resources>

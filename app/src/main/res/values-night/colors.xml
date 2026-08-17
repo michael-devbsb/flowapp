@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Semantic Colors - Dark Mode -->
+    <color name="app_background">#121212</color>
+    <color name="app_surface">#1E1E1E</color>
+    <color name="app_on_background">#FFFFFF</color>
+    <color name="app_on_surface">#FFFFFF</color>
+    <color name="app_text_secondary">#B0B0B0</color>
+    <color name="app_stroke">#33FFFFFF</color>
+    <color name="app_card_bg">#1E1E1E</color>
+    <color name="app_fab_bg">#FFFFFF</color>
+    <color name="app_fab_icon">#121212</color>
+</resources>

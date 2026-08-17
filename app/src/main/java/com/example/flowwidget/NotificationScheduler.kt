@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import com.example.flowwidget.data.local.RoutineBlock
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -12,12 +13,13 @@ object NotificationScheduler {
 
     fun scheduleAlarm(context: Context, block: RoutineBlock) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val nextTriggerTime = calculateNextTriggerTime(context, block) ?: return
+        val nextTriggerTime = calculateNextTriggerTime(block) ?: return
 
         val intent = Intent(context, RoutineAlarmReceiver::class.java).apply {
             putExtra("BLOCK_ID", block.id)
             putExtra("BLOCK_NAME", block.name)
             putExtra("BLOCK_TIME", block.startTime)
+            putExtra("REMINDER_MINUTES", block.reminderMinutes)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -69,9 +71,8 @@ object NotificationScheduler {
         alarmManager.cancel(pendingIntent)
     }
 
-    private fun calculateNextTriggerTime(context: Context, block: RoutineBlock): Long? {
-        val prefs = context.getSharedPreferences("flow_prefs", Context.MODE_PRIVATE)
-        val preAlarmMinutes = prefs.getInt("reminder_minutes", 15)
+    private fun calculateNextTriggerTime(block: RoutineBlock): Long? {
+        val preAlarmMinutes = block.reminderMinutes
 
         val now = Calendar.getInstance()
         

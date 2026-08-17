@@ -1,57 +1,57 @@
-# 📱 FlowWidget
+# 📱 Flow
 
-Um esqueleto de rotina inteligente, flutuante e totalmente focado em **privacidade e soberania de dados**. O FlowWidget roda 24/7 direto no seu dispositivo Android, sem conexões externas, sem APIs gringas e sem coletar seus dados na nuvem.
+Um organizador de rotina inteligente e focado em **privacidade e soberania de dados**. O Flow funciona de forma totalmente local no seu dispositivo Android, sem depender de nuvem ou APIs externas, garantindo que seus dados permaneçam privados.
 
 ---
 
 ## 🎯 Objetivo do Projeto
-O FlowWidget nasceu da necessidade de um organizador de rotina que não te prenda a ecossistemas fechados. Ele atua como um "overlay" (camada visual) por cima do sistema operacional, mantendo o bloco de tarefas atual e um timer regressivo sempre visíveis, ajudando no foco e na produtividade em tempo real.
+O Flow ajuda você a manter o foco através de uma notificação persistente que exibe a tarefa atual, sub-tarefas e um cronômetro regressivo direto na central de notificações. Ele é ideal para quem busca produtividade sem distrações e com total controle sobre suas informações.
 
 ## 🛠️ Funcionalidades Principais
 
-* **Widget Flutuante (Overlay Nativo):** Camada visual móvel com largura fixa (1/4 da tela) que exibe o timer regressivo e as sub-tarefas ativas por cima de qualquer aplicativo.
-* **Lembretes Antecipados (15 min):** Sistema de notificações inteligente que avisa o usuário 15 minutos antes do início de qualquer tarefa agendada.
-* **Banco de Dados 100% Local (Room/SQLite):** Seus blocos de estudo, trabalho e vida pessoal nascem e morrem dentro do armazenamento interno do seu celular.
-* **Calendário Vertical Dinâmico:** Visualização infinita de semanas com scroll vertical, mantendo sempre 3 linhas visíveis. O cabeçalho do mês atualiza-se automaticamente conforme o scroll.
-* **Seletor de Cores Arco-Íris:** Personalização de blocos com uma paleta fixa de 12 cores vibrantes selecionáveis via interface intuitiva.
-* **Detalhes da Rotina:** Visualização completa de informações do bloco (horário, dias, tarefas) através de um modal centralizado, sem precisar entrar no modo de edição.
-* **Lógica do "Momento Livre":** Quando você entra em um bloco de tempo livre, o widget oferece um botão para ocultar a interface. O widget reaparece sozinho assim que o próximo bloco ativo começa.
-* **Gestão Inteligente de Conflitos:** Separação entre rotinas fixas (recorrentes da semana) e pontuais, com sistema de priorização via alertas.
-* **Blindagem Standby (Anti-Kill):** Implementação de `START_STICKY`, Watchdog (`BroadcastReceiver`) e `AlarmManager` para garantir que o sistema não encerre o cronômetro ou os lembretes.
+*   **Monitoramento Ativo:** Notificação persistente com timer em tempo real e lista de tarefas do bloco atual.
+*   **Gestão de Rotina:** Suporte para blocos de tempo **Fixos** (semanais) e **Pontuais** (datas específicas).
+*   **Calendário Inteligente:** Grid de calendário personalizado para navegação rápida entre dias e meses.
+*   **Interface Moderna (Material 3):** Experiência visual limpa com tema totalmente neutro (grayscale) para evitar fadiga visual.
+*   **Modo Escuro & Claro Dinâmico:** Alternância instantânea entre temas com ajuste automático da barra de status do sistema para visibilidade total.
+*   **Seletores Nativos Compose:** Uso de `TimePicker` e `DatePicker` modernos, totalmente integrados ao tema do app.
+*   **Salvamento Automático:** Configurações de lembretes salvas instantaneamente com feedback visual (indicador de status no campo).
+*   **Exportação CSV:** Exporte toda a sua rotina para um arquivo local para backup ou análise externa.
+*   **Resiliência:** Implementação de `Foreground Service` e `AlarmManager` para garantir que lembretes funcionem mesmo em standby.
 
 ---
 
 ## 🏗️ Arquitetura e Tecnologias
-* **Linguagem:** Kotlin
-* **Engine de Banco de Dados:** Jetpack Room (SQLite local)
-* **Concorrência:** Kotlin Coroutines (operações assíncronas e timers leves)
-* **Interface UI:** Material Design 3 (Dark Mode nativo, cantos arredondados de 24dp/28dp)
-* **Background Processing:** Foreground Service com notificação persistente
+*   **Linguagem:** Kotlin
+*   **UI:** Jetpack Compose (Material Design 3)
+*   **Persistência:** Room Database (SQLite local)
+*   **Injeção de Dependências:** Hilt (Dagger)
+*   **Processamento:** Kotlin Coroutines & Flow
+*   **Background:** Foreground Service & AlarmManager
 
 ---
 
-## 🔓 Como Compilar e Rodar (Open Source)
+## 🔓 Como Compilar e Rodar
 
-Sendo um projeto de código aberto, você pode clonar e compilar o FlowWidget diretamente na sua máquina:
+### Requisitos Mínimos
+*   **Android 10** (API 29) ou superior.
+*   **Android Studio** Ladybug (ou mais recente).
 
-1. Clone este repositório:
+### Passos para Build
+1. Clone o repositório:
    ```bash
    git clone https://github.com/michael-devbsb/FlowWidget.git
    ```
-
-2. Abra o projeto no **Android Studio** (versão Ladybug ou superior recomendada).
-3. Certifique-se de que o arquivo `gradle.properties` contenha a linha para suporte ao Room/KSP:
-   ```properties
-   android.disallowKotlinSourceSets=false
-   ```
-
-4. Conecte seu dispositivo Android via USB (com a Depuração USB ativa).
-5. Certifique-se de conceder as seguintes permissões ao rodar o app:
-   * **Sobreposição a outros aplicativos** (essencial para a janela flutuante).
-   * **Ignorar otimizações de bateria** (para evitar o encerramento em standby).
+2. Abra no Android Studio.
+3. Sincronize o Gradle.
+4. Para gerar o APK de teste (Debug):
+   * `Build` -> `Build Bundle(s) / APK(s)` -> `Build APK(s)`.
+5. Para gerar o APK Final (Release):
+   * `Build` -> `Generate Signed Bundle / APK...`
+   * Utilize a chave existente no projeto (`flowwidget-key.jks`) se disponível.
 
 ---
 
 ## 📄 Licença
 
-Este projeto é distribuído sob a licença **MIT** — veja o arquivo [LICENSE](LICENSE) para mais detalhes. Sinta-se livre para clonar, modificar e usar no seu próprio ecossistema pessoal.
+Este projeto é distribuído sob a licença **MIT**. Sinta-se à vontade para usar e modificar para seu uso pessoal.

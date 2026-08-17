@@ -8,15 +8,22 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.example.flowwidget.data.RoutineRepository
+import com.example.flowwidget.data.local.RoutineBlock
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class RoutineAlarmReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var repository: RoutineRepository
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            // Re-agendar todos os alarmes
             rescheduleAllAlarms(context)
             return
         }
@@ -24,11 +31,12 @@ class RoutineAlarmReceiver : BroadcastReceiver() {
         val blockId = intent.getIntExtra("BLOCK_ID", -1)
         val blockName = intent.getStringExtra("BLOCK_NAME") ?: "Tarefa"
         val blockTime = intent.getStringExtra("BLOCK_TIME") ?: ""
+        val reminderMinutes = intent.getIntExtra("REMINDER_MINUTES", 15)
 
-        showNotification(context, blockId, blockName, blockTime)
+        showNotification(context, blockId, blockName, blockTime, reminderMinutes)
     }
 
-    private fun showNotification(context: Context, id: Int, name: String, time: String) {
+    private fun showNotification(context: Context, id: Int, name: String, time: String, reminder: Int) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelId = "routine_reminders"
 
@@ -38,12 +46,14 @@ class RoutineAlarmReceiver : BroadcastReceiver() {
                 "Lembretes de Rotina",
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Notificações enviadas 15 minutos antes de uma tarefa começar."
+                description = "Notificações enviadas antes de uma tarefa começar."
             }
             notificationManager.createNotificationChannel(channel)
         }
 
-        val activityIntent = Intent(context, SettingsActivity::class.java)
+        val activityIntent = Intent(context, MainActivity::class.java).apply {
+            putExtra("navigate_to", "settings")
+        }
         val pendingIntent = PendingIntent.getActivity(
             context,
             id,
@@ -53,7 +63,7 @@ class RoutineAlarmReceiver : BroadcastReceiver() {
 
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle("Próxima Tarefa em 15 min")
+            .setContentTitle("Próxima Tarefa em $reminder min")
             .setContentText("A tarefa '$name' começará às $time.")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
@@ -65,8 +75,7 @@ class RoutineAlarmReceiver : BroadcastReceiver() {
 
     private fun rescheduleAllAlarms(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
-            val db = AppDatabase.getDatabase(context)
-            val blocks = db.routineDao().getAllBlocks()
+            val blocks = repository.getAllBlocks()
             blocks.forEach { block ->
                 NotificationScheduler.scheduleAlarm(context, block)
             }

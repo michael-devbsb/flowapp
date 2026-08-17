@@ -1,131 +1,67 @@
 package com.example.flowwidget
 
-import android.app.ActivityManager
-import android.content.Context
-import android.content.Intent
-import android.graphics.Color
-import android.net.Uri
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
-import android.provider.Settings
-import android.widget.ImageButton
-import android.widget.Toast
 import androidx.activity.ComponentActivity
-import com.google.android.material.button.MaterialButton
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.flowwidget.navigation.FlowDestinations
+import com.example.flowwidget.navigation.FlowNavGraph
+import com.example.flowwidget.ui.theme.FlowTheme
+import com.example.flowwidget.ui.viewmodels.SettingsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val OVERLAY_PERMISSION_REQ_CODE = 1234
-    private lateinit var btnToggle: ImageButton
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        // Lógica após permissão ser concedida ou negada
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        
+        checkNotificationPermission()
 
-        btnToggle = findViewById(R.id.btn_toggle_widget)
-        val btnSettings = findViewById<MaterialButton>(R.id.btn_settings)
-
-        updateToggleButtonState()
-
-        btnToggle.setOnClickListener {
-            val intent = Intent(this, FloatingWidgetService::class.java)
-            if (isServiceRunning(FloatingWidgetService::class.java)) {
-                intent.putExtra("STOP_BY_USER", true)
-                startService(intent) // Envia sinal para o serviço se auto-parar
-
-                btnToggle.setColorFilter(Color.WHITE)
-
-                Toast.makeText(this, "Widget desativado", Toast.LENGTH_SHORT).show()
-            } else {
-                if (checkOverlayPermission()) {
-                    checkBatteryOptimization()
-                    startWidgetService()
-                } else {
-                    requestOverlayPermission()
-                }
-            }
+        val startDestination = if (intent?.getStringExtra("navigate_to") == "settings") {
+            FlowDestinations.SETTINGS_ROUTE
+        } else {
+            FlowDestinations.HOME_ROUTE
         }
 
-        btnSettings.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
+        setContent {
+            val viewModel: SettingsViewModel = hiltViewModel()
+            val isDarkMode by viewModel.isDarkMode.collectAsState()
+
+            FlowTheme(darkTheme = isDarkMode) {
+                FlowNavGraph(startDestination = startDestination)
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        updateToggleButtonState()
+        checkNotificationPermission()
     }
 
-    private fun checkBatteryOptimization() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val intent = Intent()
-            val pm = getSystemService(POWER_SERVICE) as PowerManager
-            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                intent.data = Uri.parse("package:$packageName")
-                startActivity(intent)
-            }
-        }
-    }
-
-    private fun startWidgetService() {
-        val intent = Intent(this, FloatingWidgetService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
-        }
-        btnToggle.setColorFilter(Color.parseColor("#FF5252"))
-    }
-
-    private fun updateToggleButtonState() {
-        if (isServiceRunning(FloatingWidgetService::class.java)) {
-            btnToggle.setColorFilter(Color.parseColor("#FF5252")) // Vermelho sutil
-        } else {
-            btnToggle.setColorFilter(Color.WHITE)
-        }
-    }
-
-    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
-        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        @Suppress("DEPRECATION")
-        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
-            if (serviceClass.name == service.service.className) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun checkOverlayPermission(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Settings.canDrawOverlays(this)
-        } else {
-            true
-        }
-    }
-
-    private fun requestOverlayPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val intent = Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:$packageName")
-            )
-            @Suppress("DEPRECATION")
-            startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE)
-        }
-    }
-
-    @Suppress("DEPRECATION")
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
-            if (checkOverlayPermission()) {
-                startWidgetService()
-            } else {
-                Toast.makeText(this, "Permissão necessária para o widget.", Toast.LENGTH_LONG).show()
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
     }
