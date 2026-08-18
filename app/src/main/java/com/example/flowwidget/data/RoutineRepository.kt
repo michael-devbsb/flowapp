@@ -20,6 +20,9 @@ class RoutineRepository @Inject constructor(
     suspend fun getBlocksForDay(dayOfWeek: Int, date: String) = 
         routineDao.getBlocksForDay(dayOfWeek, date)
 
+    fun getBlocksForDayFlow(dayOfWeek: Int, date: String): Flow<List<RoutineBlock>> =
+        routineDao.getBlocksForDayFlow(dayOfWeek, date)
+
     fun getActiveBlock(currentTime: String, dayOfWeek: Int, date: String): Flow<RoutineBlock?> =
         routineDao.getActiveBlock(currentTime, dayOfWeek, date)
 

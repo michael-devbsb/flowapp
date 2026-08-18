@@ -34,6 +34,21 @@ class RoutineAlarmReceiver : BroadcastReceiver() {
         val reminderMinutes = intent.getIntExtra("REMINDER_MINUTES", 15)
 
         showNotification(context, blockId, blockName, blockTime, reminderMinutes)
+        
+        // Reagendamento automático para rotinas fixas
+        if (blockId != -1) {
+            rescheduleNextOccurrence(context, blockId)
+        }
+    }
+
+    private fun rescheduleNextOccurrence(context: Context, blockId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val blocks = repository.getAllBlocks()
+            val block = blocks.find { it.id == blockId }
+            if (block != null && block.isFixed) {
+                NotificationScheduler.scheduleAlarm(context, block)
+            }
+        }
     }
 
     private fun showNotification(context: Context, id: Int, name: String, time: String, reminder: Int) {

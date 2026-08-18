@@ -9,15 +9,16 @@ O Flow ajuda você a manter o foco através de uma notificação persistente que
 
 ## 🛠️ Funcionalidades Principais
 
+*   **Navegação Fluida:** Transição entre dias através de **scroll horizontal** na lista de blocos, sincronizado com o calendário.
 *   **Monitoramento Ativo:** Notificação persistente com timer em tempo real e lista de tarefas do bloco atual.
-*   **Gestão de Rotina:** Suporte para blocos de tempo **Fixos** (semanais) e **Pontuais** (datas específicas).
+*   **Gestão de Rotina:** Suporte para blocos de tempo **Fixos** (semanais com indicadores minimalistas) e **Pontuais** (datas específicas).
+*   **Controle de Conclusão:** Marque tarefas pontuais como concluídas diretamente na lista com feedback visual (tachado e alteração de contraste).
 *   **Calendário Inteligente:** Grid de calendário personalizado para navegação rápida entre dias e meses.
-*   **Interface Moderna (Material 3):** Experiência visual limpa com tema totalmente neutro (grayscale) para evitar fadiga visual.
-*   **Modo Escuro & Claro Dinâmico:** Alternância instantânea entre temas com ajuste automático da barra de status do sistema para visibilidade total.
-*   **Seletores Nativos Compose:** Uso de `TimePicker` e `DatePicker` modernos, totalmente integrados ao tema do app.
-*   **Salvamento Automático:** Configurações de lembretes salvas instantaneamente com feedback visual (indicador de status no campo).
-*   **Exportação CSV:** Exporte toda a sua rotina para um arquivo local para backup ou análise externa.
-*   **Resiliência:** Implementação de `Foreground Service` e `AlarmManager` para garantir que lembretes funcionem mesmo em standby.
+*   **Interface Moderna (Material 3):** Experiência visual limpa com tema adaptativo e foco em usabilidade.
+*   **Modo Escuro & Claro Dinâmico:** Alternância instantânea entre temas com ajuste automático da interface.
+*   **Backup e Restauração:** Sistema de exportação e importação via **CSV robusto** (com suporte a caracteres especiais e aspas), permitindo migrar ou restaurar sua rotina facilmente.
+*   **Visão Geral:** Acesso rápido a todos os blocos cadastrados através de um botão central em formato de pílula.
+*   **Resiliência:** Implementação de `Foreground Service` e `AlarmManager` para garantir que lembretes e o monitoramento funcionem perfeitamente.
 
 ---
 
@@ -26,7 +27,7 @@ O Flow ajuda você a manter o foco através de uma notificação persistente que
 *   **UI:** Jetpack Compose (Material Design 3)
 *   **Persistência:** Room Database (SQLite local)
 *   **Injeção de Dependências:** Hilt (Dagger)
-*   **Processamento:** Kotlin Coroutines & Flow
+*   **Navegação & Estado:** ViewModel, Flow e Navigation Compose.
 *   **Background:** Foreground Service & AlarmManager
 
 ---
@@ -48,7 +49,7 @@ O Flow ajuda você a manter o foco através de uma notificação persistente que
    * `Build` -> `Build Bundle(s) / APK(s)` -> `Build APK(s)`.
 5. Para gerar o APK Final (Release):
    * `Build` -> `Generate Signed Bundle / APK...`
-   * Utilize a chave existente no projeto (`flowwidget-key.jks`) se disponível.
+   * Certifique-se de marcar as assinaturas **V1 e V2** para máxima compatibilidade.
 
 ---
 

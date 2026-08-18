@@ -8,14 +8,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.flowwidget.data.local.RoutineBlock
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,6 +37,7 @@ fun AllBlocksSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight(0.9f)
                 .padding(horizontal = 24.dp, vertical = 12.dp)
         ) {
             Text(
@@ -57,6 +62,10 @@ fun AllBlocksSheet(
                     )
                 }
             } else {
+                val (fixed, punctual) = remember(routines) {
+                    routines.partition { it.isFixed }
+                }
+                
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -64,7 +73,46 @@ fun AllBlocksSheet(
                     contentPadding = PaddingValues(vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(routines, key = { it.id }) { block ->
+                    if (punctual.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = "Pontuais",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            )
+                        }
+                    }
+
+                    items(punctual, key = { it.id }) { block ->
+                        AllBlockItem(
+                            block = block,
+                            onClick = { onClick(block) }
+                        )
+                    }
+
+                    if (punctual.isNotEmpty() && fixed.isNotEmpty()) {
+                        item {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(vertical = 4.dp),
+                                thickness = 1.dp,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                            )
+                        }
+                    }
+
+                    if (fixed.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = "Fixas",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            )
+                        }
+                    }
+
+                    items(fixed, key = { it.id }) { block ->
                         AllBlockItem(
                             block = block,
                             onClick = { onClick(block) }
@@ -115,7 +163,16 @@ private fun AllBlockItem(
                     text = block.name,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = if (block.isCompleted && !block.isFixed) {
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    } else {
+                        MaterialTheme.colorScheme.onBackground
+                    },
+                    textDecoration = if (block.isCompleted && !block.isFixed) {
+                        TextDecoration.LineThrough
+                    } else {
+                        null
+                    }
                 )
                 
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -130,8 +187,20 @@ private fun AllBlockItem(
                     if (block.isFixed) {
                         WeekdayMinimalist(block.selectedDays ?: "")
                     } else {
+                        val formattedDate = remember(block.date) {
+                            block.date?.let {
+                                try {
+                                    val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                                    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                    val date = parser.parse(it)
+                                    if (date != null) formatter.format(date) else it
+                                } catch (e: Exception) {
+                                    it
+                                }
+                            } ?: "Pontual"
+                        }
                         Text(
-                            text = "• ${block.date ?: "Punctual"}",
+                            text = "• $formattedDate",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary
                         )
